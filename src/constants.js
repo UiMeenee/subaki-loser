@@ -8,7 +8,7 @@ const subakiPUUID = "0dpkw5VWwvpErgYCoFXEtxILoqRycxP4z1E0A0UTI8SfvhPz7S3-j9h3koD
 const secret = 'GO9y3gLoYiirbrtgQJWxgvPyAzZx1T95'
 const id = '1039339247917871124'
 const token = 'MTAzOTMzOTI0NzkxNzg3MTEyNA.GJEfQm.Au0eu4Digz-jfAVcZnYb8TXjbyZQM5YW_H6e7E'
-const channelId = 1039306918142935060
+const channelId = '1039306918142935060'
 
 export {
     webhookUrl,

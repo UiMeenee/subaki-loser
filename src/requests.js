@@ -5,49 +5,38 @@ import {
     getMatchIdUrl,
     getMatchPUUIDUrl,
     apiKey,
-    webhookUrl,
-    getSummonerUrl,
 } from './constants.js'
 
-import { findFromValue } from './utils.js'
-
-// Might be useless
-async function postToWebhook(message) {
-    let body = {
-        content: message
-    }
-    let res = await fetch(webhookUrl + '?wait=true', {
-        method: 'post',
-        body: JSON.stringify(body),
-        headers: { 'Content-Type': 'application/json' }
-    })
-    let data = await res.json()
-}
-
-async function getWinOrLose(puuid) {
+async function getWinOrLose() {
     let res = await fetch(
         getMatchPUUIDUrl + subakiPUUID + '/ids?api_key=' + apiKey,
     )
+    let gameData = null
     const data = await res.json()
-    const lastGame = data.at(0)
-    let win = true
+    console.log(data);
+    const lastGame = data[0]
+    if (!process.env.LAST_GAME)
+        process.env.LAST_GAME = lastGame
+    else if (process.env.LAST_GAME === lastGame) {
+        return null
+    }
+    else 
+        process.env.LAST_GAME = lastGame
+        
     if (!R.isNil(lastGame)) {
         let game = await fetch(
             getMatchIdUrl + lastGame + '?api_key=' + apiKey,
         )
-        let gameData = await game.json()
-        let object = null
-        let i = 0;
-        do {
-            object = findFromValue(gameData.info.participants[i], subakiPUUID)
-            i++
-        } while (R.isNil(object))
-        win = object.win
+        gameData = await game.json()
     }
     else {
         console.error("No game to fetch")
     }
-    return win ? "won" : "lost"
+    return gameData
 }
 
-export { postToWebhook, getWinOrLose }
+function checkNewGame() {
+
+}
+
+export { getWinOrLose }
