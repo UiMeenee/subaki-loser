@@ -1,12 +1,20 @@
-import fetch from 'node-fetch';
-const webhookUrl = "https://discord.com/api/webhooks/1039315482152550400/F4IipIJECZBb0REnSt4wURjSB5e9NLTwP9y87sz9fueSYmEtgEtCYwYz20d7JLRp_mTN"
-const getSummonerUrl = "https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/"
-const getMatchPUUIDUrl = "https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/"
-const getMatchIdUrl = 'https://europe.api.riotgames.com/lol/match/v5/matches/'
-const apiKey = 'RGAPI-276658ed-6d40-47b5-9a35-6eea690c7be7'
-const subakiName = 'TlME TO TROLL'
-const subakiPUUID = "0dpkw5VWwvpErgYCoFXEtxILoqRycxP4z1E0A0UTI8SfvhPz7S3-j9h3koDxqNX-WwFvMQLf_f9RPQ"
+import fetch from 'node-fetch'
 import * as R from 'ramda'
+import * as Discord from 'discord.js'
+import {
+    subakiName,
+    subakiPUUID,
+    getMatchIdUrl,
+    getMatchPUUIDUrl,
+    apiKey,
+    webhookUrl,
+    getSummonerUrl,
+    secret,
+    id,
+    token
+} from './constants.js'
+
+const bot = new Discord.Client({ intents: 2592 })
 
 async function getSummoner(name) {
     let res = await fetch(
@@ -22,13 +30,13 @@ async function postToWebhook(message) {
     let res = await fetch(webhookUrl + '?wait=true', {
         method: 'post',
         body: JSON.stringify(body),
-        headers: {'Content-Type': 'application/json'}
+        headers: { 'Content-Type': 'application/json' }
     })
     let data = await res.json()
 }
 
 function findFromValue(json, value) {
-    if(json["puuid"] === value)
+    if (json["puuid"] === value)
         return json
     return null
 }
@@ -60,6 +68,19 @@ async function getWinOrLose(puuid) {
     return win ? "won" : "lost"
 }
 
-await getSummoner(subakiName)
-let win = await getWinOrLose(subakiPUUID)
-await postToWebhook(win)
+async function start() {
+    bot.login(token)
+    bot.on("ready", async () => {
+        bot.on('webhookUpdate', async () => {
+            console.log('fais un tennis');
+        })
+        await getSummoner(subakiName)
+        let win = await getWinOrLose(subakiPUUID)
+        await postToWebhook(win)
+        bot.on('typingStart', async () => {
+            await postToWebhook('pk tu parles toi')
+        })
+
+    })
+}
+start()
