@@ -68,6 +68,9 @@ async function getWinOrLose(puuid) {
     return win ? "won" : "lost"
 }
 
+// https://www.youtube.com/watch?v=iivVWOgCLOI&t=187s
+// https://discordjs.guide/popular-topics/webhooks.html#what-is-a-webhook
+// https://discord.js.org/#/docs/main/main/class/TextChannel?scrollTo=fetchWebhooks
 async function start() {
     bot.login(token)
     bot.on("ready", async () => {
